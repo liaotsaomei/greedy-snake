@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>水豚貪食蛇 Capybara Snake Master</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Noto+Sans+TC:wght@400;700;900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=2">
+</head>
+
+<body class="theme-capybara">
+  <div class="app-background"></div>
+
+  <div class="main-container">
+    <!-- Header / Navbar -->
+    <header class="game-header">
+      <div class="logo-area">
+        <span class="logo-icon">🦫</span>
+        <div class="logo-text">
+          <h1>貪食蛇 Master</h1>
+          <span class="subtitle">Capybara & Neon Arcade Edition</span>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <div class="select-group">
+          <label for="themeSelect">🎨 主題風格</label>
+          <select id="themeSelect" class="custom-select">
+            <option value="capybara">🦫 水豚老師 (Capybara)</option>
+            <option value="cat">🐱 貓咪老師 (Pink Cat)</option>
+            <option value="cyberpunk">⚡ 賽博霓虹 (Cyberpunk)</option>
+            <option value="classic">🕹️ 復古大型電玩 (Classic)</option>
+          </select>
+        </div>
+
+        <div class="select-group">
+          <label for="modeSelect">🎮 遊戲模式</label>
+          <select id="modeSelect" class="custom-select">
+            <option value="classic">🧱 經典模式 (撞牆判定)</option>
+            <option value="endless">🌌 無邊界模式 (穿牆飛行)</option>
+            <option value="frenzy">⚡ 狂暴道具模式 (強效道具)</option>
+          </select>
+        </div>
+
+        <button id="soundToggle" class="icon-btn" title="切換音效" aria-label="切換音效">
+          <span id="soundIcon">🔊</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Score & Stats Bar -->
+    <section class="stats-bar">
+      <div class="stat-card highlight-lives">
+        <span class="stat-label">剩餘生命</span>
+        <span id="livesVal" class="stat-value">❤️❤️❤️</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">當前分數</span>
+        <span id="scoreVal" class="stat-value">0</span>
+      </div>
+      <div class="stat-card highlight">
+        <span class="stat-label">最高紀錄</span>
+        <span id="highScoreVal" class="stat-value">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">連擊倍率</span>
+        <span id="comboVal" class="stat-value">1.0x</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">當前長度</span>
+        <span id="lengthVal" class="stat-value">3</span>
+      </div>
+    </section>
+
+    <!-- Active Powerups HUD Banner -->
+    <div id="powerupBanner" class="powerup-banner hidden">
+      <span class="powerup-icon">⚡</span>
+      <span id="powerupText" class="powerup-text">雙倍分數中 (5s)</span>
+      <div class="powerup-bar-wrapper">
+        <div id="powerupBar" class="powerup-bar"></div>
+      </div>
+    </div>
+
+    <!-- Main Game Board Container -->
+    <main class="game-wrapper">
+      <div class="canvas-container">
+        <canvas id="gameCanvas" width="600" height="600"></canvas>
+
+        <!-- Overlay Screen (Start / Pause / Game Over) -->
+        <div id="gameOverlay" class="game-overlay">
+          <div class="overlay-card">
+            <div id="overlayIcon" class="overlay-icon">🦫</div>
+            <h2 id="overlayTitle">準備好開始了嗎？</h2>
+            <p id="overlaySubtitle">按下空白鍵 (Space) 或點擊下方按鈕開始遊戲</p>
+
+            <div id="finalStats" class="final-stats hidden">
+              <div class="final-stat-item">
+                <span>最終得分</span>
+                <strong id="finalScore">0</strong>
+              </div>
+              <div class="final-stat-item">
+                <span>吃到食物</span>
+                <strong id="finalFood">0</strong>
+              </div>
+              <div class="final-stat-item">
+                <span>存活時間</span>
+                <strong id="finalTime">0s</strong>
+              </div>
+            </div>
+
+            <div class="overlay-buttons">
+              <button id="startBtn" class="btn primary-btn">🚀 開始遊戲</button>
+              <button id="helpBtn" class="btn secondary-btn">📖 操作說明</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Bottom Action Controls -->
+    <footer class="controls-bar">
+      <button id="pauseBtn" class="btn btn-outline" disabled>⏸️ 暫停 (P)</button>
+      <button id="restartBtn" class="btn btn-outline">🔄 重新開始 (R)</button>
+
+      <div class="speed-selector">
+        <label>⚡ 速度:</label>
+        <button class="speed-btn active" data-speed="120">正常</button>
+        <button class="speed-btn" data-speed="80">快速</button>
+        <button class="speed-btn" data-speed="50">極速</button>
+      </div>
+    </footer>
+
+    <!-- Mobile Virtual D-Pad -->
+    <div class="mobile-dpad">
+      <div class="dpad-row">
+        <button class="dpad-btn up" data-dir="UP">▲</button>
+      </div>
+      <div class="dpad-row">
+        <button class="dpad-btn left" data-dir="LEFT">◄</button>
+        <div class="dpad-center">🦫</div>
+        <button class="dpad-btn right" data-dir="RIGHT">►</button>
+      </div>
+      <div class="dpad-row">
+        <button class="dpad-btn down" data-dir="DOWN">▼</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Help / Guide Modal -->
+  <div id="helpModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>📖 貪食蛇遊戲說明</h3>
+        <button id="closeHelpBtn" class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="guide-section">
+          <h4>⌨️ 鍵盤控制</h4>
+          <ul>
+            <li><kbd>W</kbd> / <kbd>A</kbd> / <kbd>S</kbd> / <kbd>D</kbd> 或 <kbd>↑</kbd> <kbd>←</kbd> <kbd>↓</kbd>
+              <kbd>→</kbd> ：控制蛇前進方向</li>
+            <li><kbd>Space</kbd> ：開始 / 重新開始遊戲</li>
+            <li><kbd>P</kbd> ：暫停 / 繼續遊戲</li>
+            <li><kbd>R</kbd> ：快速重新開始</li>
+          </ul>
+        </div>
+        <div class="guide-section">
+          <h4>🍎 食物與特殊道具</h4>
+          <ul class="item-list">
+            <li><span class="item-badge food">🍊 橘子 / 魚乾</span> 基礎食物 (+10分)</li>
+            <li><span class="item-badge star">⭐ 星星食物</span> 增加 1 條生命 (最多 3 條命 ❤️❤️❤️)</li>
+            <li><span class="item-badge monster">👾 小怪獸</span> 惡魔小怪獸！碰到會減少 1 條命 (扣 1 ❤️)</li>
+            <li><span class="item-badge double">⚡ 雙倍水晶</span> 10秒內獲得雙倍分數 (+20分)</li>
+            <li><span class="item-badge slow">🐢 慢速水母</span> 降低蛇的移動速度 6 秒</li>
+            <li><span class="item-badge magnet">🧲 磁鐵能量</span> 自動吸引周圍 4 格內的食物</li>
+            <li><span class="item-badge bomb">💣 炸彈清障</span> 消除蛇身尾部 2 節並獲得額外獎勵</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js?v=2"></script>
+</body>
+
+</html>
